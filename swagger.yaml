@@ -17,14 +17,6 @@ servers:
   - description: Prod
     url: 'http://production.com/api/v1'
 tags:
-  - name: Auth
-    description: Authentication Endpoints (public)
-  - name: Article
-    description: Article Endpoints (public + private)
-  - name: Comment
-    description: Comment Endpoints (private)
-  - name: User
-    description: User Endpoints (admin only)
   - name: Product
     description: Products Endpoints ( public + private )
   - name: Cart
@@ -34,386 +26,11 @@ tags:
   - name: Wishlist
     description: Wishlist Endpoints (private)
 paths:
-  '/auth/register':
-    post:
-      description: create a new account
-      tags: [Auth]
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  example: Abdullah Alamin
-                email:
-                  type: string
-                  format: email
-                  example: alamin@example.com
-                password:
-                  type: string
-                  format: password
-                  example: PassWord123
-              required: [name, email, password]
-      responses:
-        '201':
-          description: Signup successul
-          content:
-            'application/json':
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    format: int32
-                    example: 201
-                  message:
-                    type: string
-                    example: Signup successful
-                  data:
-                    type: object
-                    properties:
-                      access_token:
-                        type: string
-                        example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-                  links:
-                    type: object
-                    properties:
-                      self:
-                        type: string
-                        example: '/auth/signup'
-                      signin:
-                        type: string
-                        example: '/auth/signin'
-        '400':
-          $ref: '#/components/responses/400'
-        '500':
-          '$ref': '#/components/responses/500'
-  '/auth/login':
-    post:
-      description: Login to your account
-      tags: [Auth]
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                  example: alamin@example.com
-                password:
-                  type: string
-                  format: password
-                  example: PassWord123
-              required: [email, password]
-      responses:
-        '200':
-          description: Signin successul
-          content:
-            'application/json':
-              schema:
-                type: object
-                properties:
-                  code:
-                    type: integer
-                    format: int32
-                    example: 200
-                  message:
-                    type: string
-                    example: Signin successful
-                  data:
-                    type: object
-                    properties:
-                      access_token:
-                        type: string
-                        example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c'
-                  links:
-                    type: object
-                    properties:
-                      self:
-                        type: string
-                        example: '/auth/signin'
-        '400':
-          $ref: '#/components/responses/400'
-        '500':
-          '$ref': '#/components/responses/500'
-  '/articles':
-    get:
-      tags: [Article]
-      description: Retrive all published articles
-      parameters:
-        - $ref: '#/components/parameters/pageParam'
-        - $ref: '#/components/parameters/limitParam'
-        - $ref: '#/components/parameters/sortTypeParam'
-        - $ref: '#/components/parameters/sortByParam'
-        - $ref: '#/components/parameters/searchParam'
-      responses:
-        '200':
-          description: Return a list of articles
-          content:
-            'application/json':
-              schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      allOf:
-                        - type: object
-                          properties:
-                            id:
-                              type: integer
-                              format: int32
-                              example: 1
-                            title:
-                              type: string
-                              example: first article
-                            cover:
-                              type: string
-                              format: url
-                              example: https://s3.aws.com/myfirstblog/124.jpg
-                            author:
-                              $ref: '#/components/schemas/AuthorDTO'
-                            link:
-                              type: string
-                              format: url
-                              example: '/articles/1'
-                          required: [id, title, author]
-                        - $ref: '#/components/schemas/Timestamp'
-                  pagination:
-                    $ref: '#/components/schemas/Pagination'
-                  links:
-                    type: object
-                    properties:
-                      self:
-                        type: string
-                        format: url
-                        example: '/articles?page=2&limit=10'
-                      next:
-                        type: string
-                        format: url
-                        example: '/articles?page=3&limit=10'
-                      prev:
-                        type: string
-                        format: url
-                        example: '/articles?page=1&limit=10'
-        '400':
-          $ref: '#/components/responses/400'
-        '500':
-          '$ref': '#/components/responses/500'
-    post:
-      operationId: createPost
-      security:
-        - bearerAuth: []
-      tags: [Article]
-      description: Create a new article
-      requestBody:
-        description: To create a new article user must need to provide valid data
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: First article
-                body:
-                  type: string
-                  format: text
-                  example: Body of the first article
-                cover:
-                  type: string
-                  format: url
-                  example: https://s3.aws.example.com/23nds
-                status:
-                  type: string
-                  enum: [draft, published]
-                  example: draft
-              required: [title, body]
-      responses:
-        '201':
-          description: Successfully created a new article
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ArticleCreateDTO'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '500':
-          $ref: '#/components/responses/500'
-  '/articles/{id}':
-    get:
-      tags: [Article]
-      description: Fetch a single article
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-        - in: query
-          name: expand
-          description: expand author and comment object
-          schema:
-            type: string
-            example: 'author,comment'
-      responses:
-        '200':
-          description: 'Single Article view'
-          content:
-            'application/json':
-              schema:
-                type: object
-                properties:
-                  data:
-                    allOf:
-                      - $ref: '#/components/schemas/Article'
-                      - type: object
-                        properties:
-                          author:
-                            $ref: '#/components/schemas/AuthorDTO'
-                      - type: object
-                        properties:
-                          comments:
-                            type: array
-                            items:
-                              $ref: '#/components/schemas/Comment'
-                  links:
-                    type: object
-                    properties:
-                      self:
-                        type: string
-                        example: '/articles/1'
-                      author:
-                        type: string
-                        example: '/articles/1/author'
-                      comments:
-                        type: string
-                        example: '/articles/1/comments'
-        '400':
-          $ref: '#/components/responses/400'
-        '404':
-          $ref: '#/components/responses/404'
-        '500':
-          $ref: '#/components/responses/500'
-    put:
-      security:
-        - bearerAuth: []
-      tags: [Article]
-      description: Create or update entire article
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                  format: int32
-                  example: 1
-                title:
-                  type: string
-                  example: article title
-                body:
-                  type: string
-                  format: text
-                  example: article body
-                cover:
-                  type: string
-                  format: url
-                  example: 'https://s3.aws.myblog.com/221ddw34'
-                status:
-                  type: string
-                  enum: [draft, published]
-                  example: draft
-              required: [title, body]
-      responses:
-        '200':
-          description: 'Successfully Updated'
-          content: &article_update_content
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ArticleUpdateDTO'
-        '201':
-          description: 'Successfully Created'
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ArticleCreateDTO'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '500':
-          $ref: '#/components/responses/500'
-    patch:
-      security:
-        - bearerAuth: []
-      tags: [Article]
-      description: Partially update an article
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: article title
-                body:
-                  type: string
-                  format: text
-                  example: article body
-                cover:
-                  type: string
-                  format: url
-                  example: 'https://s3.aws.myblog.com/221ddw34'
-                status:
-                  type: string
-                  enum: [draft, published]
-                  example: draft
-      responses:
-        '200':
-          description: 'Successfully Updated'
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ArticleUpdateDTO'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '500':
-          $ref: '#/components/responses/500'
-    delete:
-      security:
-        - bearerAuth: []
-      tags: [Article]
-      description: Delete an article by id
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-      responses:
-        '204':
-          description: 'Article deleted successfully'
-        '401':
-          $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
-        '500':
-          $ref: '#/components/responses/500'
   
-
   '/products':
     get:
       tags: [Product]
-      description: Retrive all published articles
+      description: Get Many Products 
       parameters:
         - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/limitParam'
@@ -422,7 +39,7 @@ paths:
         - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
-          description: Return a list of articles
+          description: Return a list of products
           content:
             'application/json':
               schema:
@@ -434,25 +51,34 @@ paths:
                       allOf:
                         - type: object
                           properties:
-                            id:
-                              type: integer
-                              format: int32
-                              example: 1
-                            title:
-                              type: string
-                              example: first article
-                            cover:
-                              type: string
-                              format: url
-                              example: https://s3.aws.com/myfirstblog/124.jpg
-                            author:
-                              $ref: '#/components/schemas/AuthorDTO'
-                            link:
-                              type: string
-                              format: url
-                              example: '/articles/1'
-                          required: [id, title, author]
-                        - $ref: '#/components/schemas/Timestamp'
+                              title:
+                                type: string
+                                example: Full Seleve Shirt
+                              category:
+                                type: number
+                                example: 02
+                              thumbnail:
+                                type: string
+                                format: url
+                                example: https://s3.aws.example.com/23nds
+                              summary:
+                                type: string
+                                format: text
+                                example: Summary of the products
+                              description:
+                                type: string
+                                format: text
+                                example: Description of the               products
+                              price:
+                                type: number
+                                example: 350.07
+                              quantity:
+                                type: number
+                                example: 200
+                              discount_price:
+                                type: number
+                                example: 350.07
+                        - $ref: '#/components/schemas/Timestamp'  
                   pagination:
                     $ref: '#/components/schemas/Pagination'
                   links:
@@ -461,17 +87,15 @@ paths:
                       self:
                         type: string
                         format: url
-                        example: '/articles?page=2&limit=10'
+                        example: '/products?page=2&limit=10'
                       next:
                         type: string
                         format: url
-                        example: '/articles?page=3&limit=10'
+                        example: '/products?page=3&limit=10'
                       prev:
                         type: string
                         format: url
-                        example: '/articles?page=1&limit=10'
-        '400':
-          $ref: '#/components/responses/400'
+                        example: 'products?page=1&limit=10'
         '500':
           '$ref': '#/components/responses/500'
     post:
@@ -518,11 +142,11 @@ paths:
               required: [title, category, thumbnail, summary,description,price,quantity, discount_price]
       responses:
         '201':
-          description: Successfully add a new article.
+          description: Successfully add a new product.
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/ArticleCreateDTO'
+                $ref: '#/components/schemas/ProductCreateDTO'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -532,18 +156,18 @@ paths:
   '/products/{id}':
     get:
       tags: [Product]
-      description: Fetch a single article
+      description: Fetch A Single Product
       parameters:
         - $ref: '#/components/parameters/idPathParam'
         - in: query
           name: expand
-          description: expand author and comment object
+          description: expand vendor and  query object
           schema:
             type: string
-            example: 'author,comment'
+            example: 'vendor, query'
       responses:
         '200':
-          description: 'Single Article view'
+          description: 'Single Product View'
           content:
             'application/json':
               schema:
@@ -551,29 +175,27 @@ paths:
                 properties:
                   data:
                     allOf:
-                      - $ref: '#/components/schemas/Article'
+                      - $ref: '#/components/schemas/Product'
                       - type: object
                         properties:
-                          author:
-                            $ref: '#/components/schemas/AuthorDTO'
+                          seller:
+                            $ref: '#/components/schemas/SellerDTO'
                       - type: object
                         properties:
-                          comments:
+                          queries:
                             type: array
                             items:
-                              $ref: '#/components/schemas/Comment'
+                              $ref: '#/components/schemas/ProductQuery'
                   links:
                     type: object
                     properties:
                       self:
                         type: string
-                        example: '/articles/1'
-                      author:
+                        example: '/products/1'
+                      seller:
                         type: string
-                        example: '/articles/1/author'
-                      comments:
-                        type: string
-                        example: '/articles/1/comments'
+                        example: '/seller/1'
+                      
         '400':
           $ref: '#/components/responses/400'
         '404':
@@ -584,7 +206,7 @@ paths:
       security:
         - bearerAuth: []
       tags: [Product]
-      description: Create or update entire article
+      description: Update Entire Product
       parameters:
         - $ref: '#/components/parameters/idPathParam'
       requestBody:
@@ -593,39 +215,43 @@ paths:
             schema:
               type: object
               properties:
-                id:
-                  type: integer
-                  format: int32
-                  example: 1
                 title:
                   type: string
-                  example: article title
-                body:
-                  type: string
-                  format: text
-                  example: article body
-                cover:
+                  example: Full Seleve Shirt
+                category:
+                  type: number
+                  example: 02
+                thumbnail:
                   type: string
                   format: url
-                  example: 'https://s3.aws.myblog.com/221ddw34'
-                status:
+                  example: https://s3.aws.example.com/23nds
+                summary:
                   type: string
-                  enum: [draft, published]
-                  example: draft
-              required: [title, body]
+                  format: text
+                  example: Summary of the products
+                description:
+                  type: string
+                  format: text
+                  example: Description of the products
+                price:
+                  type: number
+                  example: 350.07
+                quantity:
+                  type: number
+                  example: 200
+                discount_price:
+                  type: number
+                  example: 350.07
+                
+              required: [title,]
+              
       responses:
         '200':
-          description: 'Successfully Updated'
-          content: &article_update_content
+          description: 'Successfully Updated The Product'
+          content: 
             'application/json':
               schema:
-                $ref: '#/components/schemas/ArticleUpdateDTO'
-        '201':
-          description: 'Successfully Created'
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ArticleCreateDTO'
+                $ref: '#/components/schemas/ProductUpdateDTO'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -636,7 +262,7 @@ paths:
       security:
         - bearerAuth: []
       tags: [Product]
-      description: Partially update an article
+      description: Update Product Details Partially
       parameters:
         - $ref: '#/components/parameters/idPathParam'
       requestBody:
@@ -647,44 +273,57 @@ paths:
               properties:
                 title:
                   type: string
-                  example: article title
-                body:
-                  type: string
-                  format: text
-                  example: article body
-                cover:
+                  example: Full Seleve Shirt
+                category:
+                  type: number
+                  example: 02
+                thumbnail:
                   type: string
                   format: url
-                  example: 'https://s3.aws.myblog.com/221ddw34'
-                status:
+                  example: https://s3.aws.example.com/23nds
+                summary:
                   type: string
-                  enum: [draft, published]
-                  example: draft
+                  format: text
+                  example: Summary of the products
+                description:
+                  type: string
+                  format: text
+                  example: Description of the products
+                price:
+                  type: number
+                  example: 350.07
+                quantity:
+                  type: number
+                  example: 200
+                discount_price:
+                  type: number
+                  example: 350.07
+                
+              required: [title,]
+              
       responses:
         '200':
-          description: 'Successfully Updated'
-          content:
+          description: 'Successfully Updated The Product'
+          content: 
             'application/json':
               schema:
-                $ref: '#/components/schemas/ArticleUpdateDTO'
+                $ref: '#/components/schemas/ProductUpdateDTO'
         '400':
           $ref: '#/components/responses/400'
         '401':
           $ref: '#/components/responses/401'
-        '404':
-          $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
     delete:
       security:
         - bearerAuth: []
       tags: [Product]
-      description: Delete an article by id
+      description: Delete A Product By Id
       parameters:
         - $ref: '#/components/parameters/idPathParam'
       responses:
         '204':
-          description: 'Article deleted successfully'
+          description: 'Product Deleted Successfully'
         '401':
           $ref: '#/components/responses/401'
         '404':
@@ -729,8 +368,7 @@ paths:
                               type: string
                               format: url
                               example: https://s3.aws.com/myfirstblog/124.jpg
-                            author:
-                              $ref: '#/components/schemas/AuthorDTO'
+                            
                             link:
                               type: string
                               format: url
@@ -861,12 +499,12 @@ paths:
       security:
         - bearerAuth: []
       tags: [Cart]
-      description: Delete an article by id
+      description: Delete A Product From Cart
       parameters:
         - $ref: '#/components/parameters/idPathParam'
       responses:
         '204':
-          description: 'Article deleted successfully'
+          description: 'Product deleted successfully from cart'
         '401':
           $ref: '#/components/responses/401'
         '404':
@@ -911,8 +549,7 @@ paths:
                               type: string
                               format: url
                               example: https://s3.aws.com/myfirstblog/124.jpg
-                            author:
-                              $ref: '#/components/schemas/AuthorDTO'
+                            
                             link:
                               type: string
                               format: url
@@ -1033,8 +670,7 @@ paths:
                               type: string
                               format: url
                               example: https://s3.aws.com/myfirstblog/124.jpg
-                            author:
-                              $ref: '#/components/schemas/AuthorDTO'
+                           
                             link:
                               type: string
                               format: url
@@ -1111,7 +747,7 @@ paths:
       security:
         - bearerAuth: []
       tags: [Wishlist]
-      description: Retrive all published articles
+      description: Fetch All Wishlists Product
       parameters:
         - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/limitParam'
@@ -1120,7 +756,7 @@ paths:
         - $ref: '#/components/parameters/searchParam'
       responses:
         '200':
-          description: Return a list of articles
+          description: Return a list of wishlists product
           content:
             'application/json':
               schema:
@@ -1129,28 +765,7 @@ paths:
                   data:
                     type: array
                     items:
-                      allOf:
-                        - type: object
-                          properties:
-                            id:
-                              type: integer
-                              format: int32
-                              example: 1
-                            title:
-                              type: string
-                              example: first article
-                            cover:
-                              type: string
-                              format: url
-                              example: https://s3.aws.com/myfirstblog/124.jpg
-                            author:
-                              $ref: '#/components/schemas/AuthorDTO'
-                            link:
-                              type: string
-                              format: url
-                              example: '/articles/1'
-                          required: [id, title, author]
-                        - $ref: '#/components/schemas/Timestamp'
+                      $ref: '#/components/schemas/Product'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
                   links:
@@ -1159,68 +774,51 @@ paths:
                       self:
                         type: string
                         format: url
-                        example: '/articles?page=2&limit=10'
+                        example: '/wishlists?page=2&limit=10'
                       next:
                         type: string
                         format: url
-                        example: '/articles?page=3&limit=10'
+                        example: '/wishlists?page=3&limit=10'
                       prev:
                         type: string
                         format: url
-                        example: '/articles?page=1&limit=10'
+                        example: '/wishlists?page=1&limit=10'
+                      productDetails:
+                        type: string
+                        format: url
+                        example: '/products/2'
         '400':
           $ref: '#/components/responses/400'
         '500':
           '$ref': '#/components/responses/500'
     post:
-      operationId: createPost
+      operationId: addProduct
       security:
         - bearerAuth: []
       tags: [Wishlist]
-      description: Add A New Product
+      description: Add A New Product To Wishlist
       requestBody:
-        description: To add a new product vendor must need to provide valid data
+        description: To add a new product to wishlist provide correct info
         content:
           'application/json':
             schema:
               type: object
               properties:
-                title:
-                  type: string
-                  example: Full Seleve Shirt
-                category:
+                productId:
+                  type: number
+                  example: 45
+                customerId:
                   type: number
                   example: 02
-                thumbnail:
-                  type: string
-                  format: url
-                  example: https://s3.aws.example.com/23nds
-                summary:
-                  type: string
-                  format: text
-                  example: Summary of the products
-                description:
-                  type: string
-                  format: text
-                  example: Description of the products
-                price:
-                  type: number
-                  example: 350.07
-                quantity:
-                  type: number
-                  example: 200
-                discount_price:
-                  type: number
-                  example: 350.07
-                
-              required: [title, category, thumbnail, summary,description,price,quantity, discount_price]
+
+              required: [productId,customerId]
       responses:
         '201':
-          description: Successfully add a new article.
+          description: Successfully add a new product to wishlists.
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/ArticleCreateDTO'
+                $ref: '#/components/schemas/WishlistAddDTO'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -1232,12 +830,12 @@ paths:
       security:
         - bearerAuth: []
       tags: [Wishlist]
-      description: Delete an article by id
+      description: Delete a product from wishlist by id
       parameters:
         - $ref: '#/components/parameters/idPathParam'
       responses:
         '204':
-          description: 'Article deleted successfully'
+          description: 'Product deleted from wishlist successfully'
         '401':
           $ref: '#/components/responses/401'
         '404':
@@ -1253,7 +851,40 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    Article:
+    Product:
+      allOf:
+       - type: object
+         properties:
+          title:
+            type: string
+            example: Full Seleve Shirt
+          category:
+            type: number
+            example: 02
+          thumbnail:
+            type: string
+            format: url
+            example: https://s3.aws.example.com/23nds
+          summary:
+            type: string
+            format: text
+            example: Summary of the products
+          description:
+            type: string
+            format: text
+            example: Description of the products
+          price:
+            type: number
+            example: 350.07
+          quantity:
+            type: number
+            example: 200
+          discount_price:
+            type: number
+            example: 350.07   
+       - $ref: '#/components/schemas/Timestamp'
+      required: [title, category, thumbnail, summary,description,price,quantity, discount_price]
+    ProductQuery:
       allOf:
         - type: object
           properties:
@@ -1261,59 +892,26 @@ components:
               type: integer
               format: int32
               example: 1
-            authorId:
+            customerId:
               type: integer
               format: int32
               example: 1
-            title:
-              type: string
-              example: First Article
-            body:
+            productId:
+              type: integer
+              format: int32
+              example: 1
+            query:
               type: string
               format: text
-              example: The body of the first article
-            cover:
+              example: What is the shelf life?
+            answer:
               type: string
-              format: url
-              example: https://s3.aws.example.com/23nds
-            status:
-              type: string
-              enum: [draft, published]
-              example: draft
-          required: [id, authorId, title, body, status]
+              format: text
+              example: 6 months
+            
+          required: [id, authorId, articleId, body, status]
         - $ref: '#/components/schemas/Timestamp'
-    User:
-      allOf:
-        - type: object
-          properties:
-            id:
-              type: integer
-              format: int32
-              example: 1
-            name:
-              type: string
-              example: Ali Akkas
-            email:
-              type: string
-              format: email
-              example: akkas@gmail.com
-            role:
-              type: string
-              enum:
-                - user
-                - admin
-              example: user
-            status:
-              type: string
-              enum:
-                - pending
-                - approved
-                - block
-                - decline
-              example: pending
-          required: [id, name, email, status]
-        - $ref: '#/components/schemas/Timestamp'
-    ArticleCreateDTO:
+    ProductCreateDTO:
       type: object
       properties:
         code:
@@ -1322,56 +920,21 @@ components:
           example: 201
         message:
           type: string
-          example: 'Article created successfully'
+          example: 'Product add successfully'
         data:
-          $ref: '#/components/schemas/Article'
+          $ref: '#/components/schemas/Product'
         links:
           type: object
           properties:
             self:
               type: string
               format: url
-              example: '/articles/1'
-            author:
+              example: '/products/1'
+            seller:
               type: string
               format: url
-              example: '/articles/1/author'
-            comments:
-              type: string
-              format: url
-              example: '/articles/1/comments'
-    UserCreateDTO:
-      type: object
-      properties:
-        code:
-          type: integer
-          format: int32
-          example: 201
-        message:
-          type: string
-          example: 'User created successfully'
-        data:
-          $ref: '#/components/schemas/User'
-        links:
-          type: object
-          properties:
-            self:
-              type: string
-              format: url
-              example: '/articles/1'
-            edit:
-              type: string
-              format: url
-              example: '/users/1/edit'
-            delete:
-              type: string
-              format: url
-              example: '/users/1/delete'
-            view:
-              type: string
-              format: url
-              example: '/users/1/view'
-    ArticleUpdateDTO:
+              example: '/users/seller/1'
+    ProductUpdateDTO:
       type: object
       properties:
         code:
@@ -1380,41 +943,37 @@ components:
           example: 200
         message:
           type: string
-          example: Article updated successfully
+          example: 'Product Update successfully'
         data:
-          $ref: '#/components/schemas/Article'
+          $ref: '#/components/schemas/Product'
         links:
           type: object
           properties:
             self:
               type: string
-              example: '/articles/1'
-    Comment:
-      allOf:
-        - type: object
+              format: url
+              example: '/products/1'
+            seller:
+              type: string
+              format: url
+              example: '/users/seller/1'
+    WishlistAddDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 201
+        message:
+          type: string
+          example: 'Product add to wishlist successfully.'
+        links:
+          type: object
           properties:
-            id:
-              type: integer
-              format: int32
-              example: 1
-            authorId:
-              type: integer
-              format: int32
-              example: 1
-            articleId:
-              type: integer
-              format: int32
-              example: 1
-            body:
+            self:
               type: string
-              format: text
-              example: The body of the comment
-            status:
-              type: string
-              enum: [public, private]
-              example: public
-          required: [id, authorId, articleId, body, status]
-        - $ref: '#/components/schemas/Timestamp'
+              format: url
+              example: '/wishlist'  
     Timestamp:
       type: object
       properties:
@@ -1425,7 +984,7 @@ components:
           type: string
           format: date-time
       required: [createdAt, updatedAt]
-    AuthorDTO:
+    SellerDTO:
       type: object
       properties:
         id:
@@ -1434,7 +993,7 @@ components:
           example: 1
         name:
           type: string
-          example: 'A.B Raihan'
+          example: 'John Doe'
       required: [id, name]
     Pagination:
       type: object
@@ -1468,6 +1027,7 @@ components:
         - limit
         - totalPage
         - totalItems
+    
   responses:
     '500':
       description: 'Internal Server Error'
@@ -1594,7 +1154,7 @@ components:
       in: path
       name: id
       required: true
-      description: Article ID
+      description: Product ID
       schema:
         type: string
         example: '64d268cdeef8c84bb18912db'
