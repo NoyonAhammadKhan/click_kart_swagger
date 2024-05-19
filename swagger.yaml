@@ -41,7 +41,7 @@ tags:
   - name: Transaction 
     description: Transaction Endpoints **(private)=====>>>>>(customer + admin)**
   - name: Dashboard
-    description: Dashboard Endpoints **(private)=====>>>>>(customer + admin + vendor)**
+    description: Dashboard Endpoints **(private)=====>>>>>(customer + admin + vendor)** (incomplete)
 
 
 paths:
@@ -1544,7 +1544,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/ArticleUpdateDTO'
+                $ref: '#/components/schemas/Product'
         '400':
           $ref: '#/components/responses/400'
         '401':
