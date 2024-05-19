@@ -2,7 +2,10 @@ openapi: 3.0.0
 info:
   version: '1.0.0'
   title: 'CODEMEN - ECART'
-  description: 'This is a multivendor ecommerce website.Where we have implemented different types of industry standard procedure.'
+  description: |
+    'This is a multivendor ecommerce website.Where we have implemented different types of industry standard procedure.'
+     
+     ![logo](https://i.ibb.co/1vPZdhm/logo.jpg)
   contact:
     name: CODEMEN
     url: https://codemen@@@.com
@@ -18,25 +21,29 @@ servers:
     url: 'http://production.com/api/v1'
 tags:
   - name: Auth
-    description: Authentication Endpoints (public)
+    description: Authentication Endpoints **(public)=====>>>>>(anyone)** (complete)
   - name: Account
-    description: Account Endpoints (private + admin)
+    description: Account Endpoints **(private + admin)=====>>>>>(admin + customer + seller)**
   - name: Profile
-    description: Profile Endpoints (private + admin)
+    description: Profile Endpoints **(private)=====>>>>>(admin + customer + seller)**
   - name: Category
-    description: Wishlist Endpoints (private)
+    description: Wishlist Endpoints **(private)=====>>>>>(admin)**
   - name: Product
-    description: Products Endpoints (public + private)
+    description: Products Endpoints  **(public + private)=====>>>>>(anyone)**
   - name: Cart
-    description: Cart Endpoints (private)
+    description: Cart Endpoints **(private)=====>>>>>(customer)**
   - name: Order
-    description: Order Endpoints (private)
+    description: Order Endpoints **(private)=====>>>>>(customer + admin + vendor)**
   - name: Wishlist
-    description: Wishlist Endpoints (private)
-  - name: Review (customer + admin)
-    description: Review Endpoints
-  - name: Transaction (private)
-    description: Transaction Endpoints
+    description: Wishlist Endpoints **(private)=====>>>>>(customer + admin + vendor)**
+  - name: Review 
+    description: Review Endpoints **(private)=====>>>>>(customer + admin)**
+  - name: Transaction 
+    description: Transaction Endpoints **(private)=====>>>>>(customer + admin)**
+  - name: Dashboard
+    description: Dashboard Endpoints **(private)=====>>>>>(customer + admin + vendor)**
+
+
 paths:
   '/auth/register':
     post:
@@ -220,7 +227,7 @@ paths:
   '/accounts':
     get:
       tags: [Account]
-      description: Get Many Products 
+      description: Get All Accounts
       parameters:
         - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/limitParam'
@@ -241,33 +248,29 @@ paths:
                       allOf:
                         - type: object
                           properties:
-                              title:
-                                type: string
-                                example: Full Seleve Shirt
-                              category:
-                                type: number
-                                example: 02
-                              thumbnail:
-                                type: string
-                                format: url
-                                example: https://s3.aws.example.com/23nds
-                              summary:
-                                type: string
-                                format: text
-                                example: Summary of the products
-                              description:
-                                type: string
-                                format: text
-                                example: Description of the               products
-                              price:
-                                type: number
-                                example: 350.07
-                              quantity:
-                                type: number
-                                example: 200
-                              discount_price:
-                                type: number
-                                example: 350.07
+                            username:
+                              type: string
+                              example: johndoe001
+                            first_name:
+                              type: string
+                              example: John
+                            last_name:
+                              type: string
+                              example: Doe
+                            email:
+                              type: string
+                              format: email
+                              example: johndoe@example.com
+                            role:
+                              type: string
+                              enum: [customer, vendor]
+                              example: customer
+                            verificationStatus:
+                              type: boolean
+                              example: false 
+                            profileCompletionStatus:
+                              type: boolean
+                              example: false
                         - $ref: '#/components/schemas/Timestamp'  
                   pagination:
                     $ref: '#/components/schemas/Pagination'
@@ -277,76 +280,21 @@ paths:
                       self:
                         type: string
                         format: url
-                        example: '/products?page=2&limit=10'
+                        example: '/accounts?page=2&limit=10'
                       next:
                         type: string
                         format: url
-                        example: '/products?page=3&limit=10'
+                        example: '/accounts?page=3&limit=10'
                       prev:
                         type: string
                         format: url
-                        example: 'products?page=1&limit=10'
+                        example: 'accounts?page=1&limit=10'
         '500':
           '$ref': '#/components/responses/500'
-    post:
-      operationId: createPost
-      security:
-        - bearerAuth: []
-      tags: [Account]
-      description: Add A New Product
-      requestBody:
-        description: To add a new product vendor must need to provide valid data
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Full Seleve Shirt
-                category:
-                  type: number
-                  example: 02
-                thumbnail:
-                  type: string
-                  format: url
-                  example: https://s3.aws.example.com/23nds
-                summary:
-                  type: string
-                  format: text
-                  example: Summary of the products
-                description:
-                  type: string
-                  format: text
-                  example: Description of the products
-                price:
-                  type: number
-                  example: 350.07
-                quantity:
-                  type: number
-                  example: 200
-                discount_price:
-                  type: number
-                  example: 350.07
-                
-              required: [title, category, thumbnail, summary,description,price,quantity, discount_price]
-      responses:
-        '201':
-          description: Successfully add a new product.
-          content:
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ProductCreateDTO'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '500':
-          $ref: '#/components/responses/500'
   '/accounts/{id}':
     get:
       tags: [Account]
-      description: Fetch A Single Product
+      description: Fetch A Single User Account
       parameters:
         - $ref: '#/components/parameters/idPathParam'
         - in: query
@@ -357,26 +305,39 @@ paths:
             example: 'vendor, query'
       responses:
         '200':
-          description: 'Single Product View'
+          description: 'Single User View'
           content:
             'application/json':
               schema:
                 type: object
-                properties:
-                  data:
-                    allOf:
-                      - $ref: '#/components/schemas/Product'
-                      - type: object
-                        properties:
-                          seller:
-                            $ref: '#/components/schemas/SellerDTO'
-                      - type: object
-                        properties:
-                          queries:
-                            type: array
-                            items:
-                              $ref: '#/components/schemas/ProductQuery'
-                  links:
+                allOf:
+                  - type: object
+                    properties:
+                      username:
+                        type: string
+                        example: johndoe001
+                      first_name:
+                        type: string
+                        example: John
+                      last_name:
+                        type: string
+                        example: Doe
+                      email:
+                        type: string
+                        format: email
+                        example: johndoe@example.com
+                      role:
+                        type: string
+                        enum: [customer, vendor]
+                        example: customer
+                      verificationStatus:
+                        type: boolean
+                        example: false 
+                      profileCompletionStatus:
+                        type: boolean
+                        example: false
+                  - $ref: '#/components/schemas/Timestamp'
+                    links:
                     type: object
                     properties:
                       self:
@@ -508,12 +469,12 @@ paths:
       security:
         - bearerAuth: []
       tags: [Account]
-      description: Delete A Product By Id
+      description: Delete A User Account By Id
       parameters:
         - $ref: '#/components/parameters/idPathParam'
       responses:
         '204':
-          description: 'Product Deleted Successfully'
+          description: 'User Account Deleted Successfully'
         '401':
           $ref: '#/components/responses/401'
         '404':
@@ -811,12 +772,12 @@ paths:
       security:
         - bearerAuth: []
       tags: [Profile]
-      description: Delete A Product By Id
+      description: Delete A Customer Profile
       parameters:
         - $ref: '#/components/parameters/idPathParam'
       responses:
         '204':
-          description: 'Product Deleted Successfully'
+          description: ' Customer Profile Deleted Successfully'
         '401':
           $ref: '#/components/responses/401'
         '404':
@@ -1114,23 +1075,22 @@ paths:
       security:
         - bearerAuth: []
       tags: [Profile]
-      description: Delete A Product By Id
+      description: Delete A Vendor Profile
       parameters:
         - $ref: '#/components/parameters/idPathParam'
       responses:
         '204':
-          description: 'Product Deleted Successfully'
+          description: 'Vendor Profile Deleted Successfully'
         '401':
           $ref: '#/components/responses/401'
         '404':
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-  
   '/categories':
     get:
       tags: [Category]
-      description: Get Many Products 
+      description: Get All Category
       parameters:
         - $ref: '#/components/parameters/pageParam'
         - $ref: '#/components/parameters/limitParam'
@@ -1206,7 +1166,7 @@ paths:
           content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/ProductCreateDTO'
+                $ref: '#/components/schemas/CategoryCreateDTO'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -1227,25 +1187,20 @@ paths:
             example: 'vendor, query'
       responses:
         '200':
-          description: 'Single Product View'
+          description: 'Single Category View'
           content:
             'application/json':
               schema:
                 type: object
                 properties:
                   data:
-                    allOf:
-                      - $ref: '#/components/schemas/Product'
-                      - type: object
-                        properties:
-                          seller:
-                            $ref: '#/components/schemas/SellerDTO'
-                      - type: object
-                        properties:
-                          queries:
-                            type: array
-                            items:
-                              $ref: '#/components/schemas/ProductQuery'
+                   allOf:
+                    - type: object
+                      properties: 
+                        id: 
+                          type: number 
+                          example: 12344  
+                    - $ref: '#/components/schemas/Category'
                   links:
                     type: object
                     properties:
@@ -1378,19 +1333,18 @@ paths:
       security:
         - bearerAuth: []
       tags: [Category]
-      description: Delete A Product By Id
+      description: Delete A Category
       parameters:
         - $ref: '#/components/parameters/idPathParam'
       responses:
         '204':
-          description: 'Product Deleted Successfully'
+          description: 'Category Deleted Successfully'
         '401':
           $ref: '#/components/responses/401'
         '404':
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-   
   '/products':
     get:
       tags: [Product]
@@ -2206,6 +2160,733 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
+  '/reviews':
+    get:
+      tags: [Review]
+      description: Get Many Products 
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortTypeParam'
+        - $ref: '#/components/parameters/sortByParam'
+        - $ref: '#/components/parameters/searchParam'
+      responses:
+        '200':
+          description: Return a list of products
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - type: object
+                          properties:
+                              title:
+                                type: string
+                                example: Full Seleve Shirt
+                              category:
+                                type: number
+                                example: 02
+                              thumbnail:
+                                type: string
+                                format: url
+                                example: https://s3.aws.example.com/23nds
+                              summary:
+                                type: string
+                                format: text
+                                example: Summary of the products
+                              description:
+                                type: string
+                                format: text
+                                example: Description of the               products
+                              price:
+                                type: number
+                                example: 350.07
+                              quantity:
+                                type: number
+                                example: 200
+                              discount_price:
+                                type: number
+                                example: 350.07
+                        - $ref: '#/components/schemas/Timestamp'  
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: '/products?page=2&limit=10'
+                      next:
+                        type: string
+                        format: url
+                        example: '/products?page=3&limit=10'
+                      prev:
+                        type: string
+                        format: url
+                        example: 'products?page=1&limit=10'
+        '500':
+          '$ref': '#/components/responses/500'
+    post:
+      operationId: createReview
+      security:
+        - bearerAuth: []
+      tags: [Review]
+      description: |
+        Add A Review Of A Product
+
+        Endpoint Access Role- **(Customer)**
+      requestBody:
+        description: To add a new review user must provide the rating and review
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                customerId:
+                  type:  number
+                  example: 102393
+                productId:
+                  type: number
+                  example: 402443
+                orderId:
+                  type: number
+                  example: 402443
+                rating:
+                  type: number
+                  example: 4.0
+                comment:
+                  type: string
+                  format: text
+                  example: The product is amazing. This seller provided me best service
+                createdAt:
+                  type: string
+                  format: date-time    
+              required: [customerId,productId,orderId, rating,comment, createdAt]
+      responses:
+        '201':
+          description: Successfully Reviewed A Product.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ReviewCreateDTO'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+  '/reviews/{id}':
+    get:
+      tags: [Review]
+      description: Fetch A Single Product
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+        - in: query
+          name: expand
+          description: expand vendor and  query object
+          schema:
+            type: string
+            example: 'vendor, query'
+      responses:
+        '200':
+          description: 'Single Product View'
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Product'
+                      - type: object
+                        properties:
+                          seller:
+                            $ref: '#/components/schemas/SellerDTO'
+                      - type: object
+                        properties:
+                          queries:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/ProductQuery'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: '/products/1'
+                      seller:
+                        type: string
+                        example: '/seller/1'
+                      
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: []
+      tags: [Review]
+      description: Update Entire Product
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Full Seleve Shirt
+                category:
+                  type: number
+                  example: 02
+                thumbnail:
+                  type: string
+                  format: url
+                  example: https://s3.aws.example.com/23nds
+                summary:
+                  type: string
+                  format: text
+                  example: Summary of the products
+                description:
+                  type: string
+                  format: text
+                  example: Description of the products
+                price:
+                  type: number
+                  example: 350.07
+                quantity:
+                  type: number
+                  example: 200
+                discount_price:
+                  type: number
+                  example: 350.07
+                
+              required: [title,]
+              
+      responses:
+        '200':
+          description: 'Successfully Updated The Product'
+          content: 
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ProductUpdateDTO'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+    patch:
+      security:
+        - bearerAuth: []
+      tags: [Review]
+      description: Update Product Details Partially
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Full Seleve Shirt
+                category:
+                  type: number
+                  example: 02
+                thumbnail:
+                  type: string
+                  format: url
+                  example: https://s3.aws.example.com/23nds
+                summary:
+                  type: string
+                  format: text
+                  example: Summary of the products
+                description:
+                  type: string
+                  format: text
+                  example: Description of the products
+                price:
+                  type: number
+                  example: 350.07
+                quantity:
+                  type: number
+                  example: 200
+                discount_price:
+                  type: number
+                  example: 350.07
+                
+              required: [title,]
+              
+      responses:
+        '200':
+          description: 'Successfully Updated The Product'
+          content: 
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ProductUpdateDTO'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+    delete:
+      security:
+        - bearerAuth: []
+      tags: [Review]
+      description: |
+        Delete Review Successfully 
+        
+        Endpoint Access Role- **(Admin)**
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      responses:
+        '204':
+          description: 'Review Deleted Successfully'
+        '401':
+          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  '/transactions':
+    get:
+      tags: [Transaction]
+      description: Get Many Products 
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortTypeParam'
+        - $ref: '#/components/parameters/sortByParam'
+        - $ref: '#/components/parameters/searchParam'
+      responses:
+        '200':
+          description: Return a list of products
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - type: object
+                          properties:
+                              title:
+                                type: string
+                                example: Full Seleve Shirt
+                              category:
+                                type: number
+                                example: 02
+                              thumbnail:
+                                type: string
+                                format: url
+                                example: https://s3.aws.example.com/23nds
+                              summary:
+                                type: string
+                                format: text
+                                example: Summary of the products
+                              description:
+                                type: string
+                                format: text
+                                example: Description of the               products
+                              price:
+                                type: number
+                                example: 350.07
+                              quantity:
+                                type: number
+                                example: 200
+                              discount_price:
+                                type: number
+                                example: 350.07
+                        - $ref: '#/components/schemas/Timestamp'  
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: '/products?page=2&limit=10'
+                      next:
+                        type: string
+                        format: url
+                        example: '/products?page=3&limit=10'
+                      prev:
+                        type: string
+                        format: url
+                        example: 'products?page=1&limit=10'
+        '500':
+          '$ref': '#/components/responses/500'
+    post:
+      operationId: createTransaction
+      security:
+        - bearerAuth: []
+      tags: [Transaction]
+      description: Add A New Product
+      requestBody:
+        description: To add a new product vendor must need to provide valid data
+        content:
+          'application/json':
+            schema:
+              $ref: '#/components/schemas/Transaction'
+
+      responses:
+        '201':
+          description: Transaction Of A User Created Successfully.
+          content:
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/TransactionCreateDTO'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+  '/transactions/{id}':
+    get:
+      tags: [Transaction]
+      description: Fetch A Single Product
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+        - in: query
+          name: expand
+          description: expand vendor and  query object
+          schema:
+            type: string
+            example: 'vendor, query'
+      responses:
+        '200':
+          description: 'Single Product View'
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Product'
+                      - type: object
+                        properties:
+                          seller:
+                            $ref: '#/components/schemas/SellerDTO'
+                      - type: object
+                        properties:
+                          queries:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/ProductQuery'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: '/products/1'
+                      seller:
+                        type: string
+                        example: '/seller/1'
+                      
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+    put:
+      security:
+        - bearerAuth: []
+      tags: [Transaction]
+      description: Update Entire Product
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Full Seleve Shirt
+                category:
+                  type: number
+                  example: 02
+                thumbnail:
+                  type: string
+                  format: url
+                  example: https://s3.aws.example.com/23nds
+                summary:
+                  type: string
+                  format: text
+                  example: Summary of the products
+                description:
+                  type: string
+                  format: text
+                  example: Description of the products
+                price:
+                  type: number
+                  example: 350.07
+                quantity:
+                  type: number
+                  example: 200
+                discount_price:
+                  type: number
+                  example: 350.07
+                
+              required: [title,]
+              
+      responses:
+        '200':
+          description: 'Successfully Updated The Product'
+          content: 
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ProductUpdateDTO'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+    patch:
+      security:
+        - bearerAuth: []
+      tags: [Transaction]
+      description: Update Product Details Partially
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+      requestBody:
+        content:
+          'application/json':
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                  example: Full Seleve Shirt
+                category:
+                  type: number
+                  example: 02
+                thumbnail:
+                  type: string
+                  format: url
+                  example: https://s3.aws.example.com/23nds
+                summary:
+                  type: string
+                  format: text
+                  example: Summary of the products
+                description:
+                  type: string
+                  format: text
+                  example: Description of the products
+                price:
+                  type: number
+                  example: 350.07
+                quantity:
+                  type: number
+                  example: 200
+                discount_price:
+                  type: number
+                  example: 350.07
+                
+              required: [title,]
+              
+      responses:
+        '200':
+          description: 'Successfully Updated The Product'
+          content: 
+            'application/json':
+              schema:
+                $ref: '#/components/schemas/ProductUpdateDTO'
+        '400':
+          $ref: '#/components/responses/400'
+        '401':
+          $ref: '#/components/responses/401'
+        '500':
+          $ref: '#/components/responses/500'
+  '/dashboard/admin':
+    get:
+      tags: [Dashboard]
+      description: Get Many Products 
+      parameters:
+        - $ref: '#/components/parameters/pageParam'
+        - $ref: '#/components/parameters/limitParam'
+        - $ref: '#/components/parameters/sortTypeParam'
+        - $ref: '#/components/parameters/sortByParam'
+        - $ref: '#/components/parameters/searchParam'
+      responses:
+        '200':
+          description: Return a list of products
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - type: object
+                          properties:
+                              title:
+                                type: string
+                                example: Full Seleve Shirt
+                              category:
+                                type: number
+                                example: 02
+                              thumbnail:
+                                type: string
+                                format: url
+                                example: https://s3.aws.example.com/23nds
+                              summary:
+                                type: string
+                                format: text
+                                example: Summary of the products
+                              description:
+                                type: string
+                                format: text
+                                example: Description of the               products
+                              price:
+                                type: number
+                                example: 350.07
+                              quantity:
+                                type: number
+                                example: 200
+                              discount_price:
+                                type: number
+                                example: 350.07
+                        - $ref: '#/components/schemas/Timestamp'  
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        format: url
+                        example: '/products?page=2&limit=10'
+                      next:
+                        type: string
+                        format: url
+                        example: '/products?page=3&limit=10'
+                      prev:
+                        type: string
+                        format: url
+                        example: 'products?page=1&limit=10'
+        '500':
+          '$ref': '#/components/responses/500'
+  '/dashboard/vendor':
+    get:
+      tags: [Dashboard]
+      description: Fetch A Single Product
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+        - in: query
+          name: expand
+          description: expand vendor and  query object
+          schema:
+            type: string
+            example: 'vendor, query'
+      responses:
+        '200':
+          description: 'Single Product View'
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Product'
+                      - type: object
+                        properties:
+                          seller:
+                            $ref: '#/components/schemas/SellerDTO'
+                      - type: object
+                        properties:
+                          queries:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/ProductQuery'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: '/products/1'
+                      seller:
+                        type: string
+                        example: '/seller/1'
+                      
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
+  '/dashboard/customer':
+    get:
+      tags: [Dashboard]
+      description: Fetch A Single Product
+      parameters:
+        - $ref: '#/components/parameters/idPathParam'
+        - in: query
+          name: expand
+          description: expand vendor and  query object
+          schema:
+            type: string
+            example: 'vendor, query'
+      responses:
+        '200':
+          description: 'Single Product View'
+          content:
+            'application/json':
+              schema:
+                type: object
+                properties:
+                  data:
+                    allOf:
+                      - $ref: '#/components/schemas/Product'
+                      - type: object
+                        properties:
+                          seller:
+                            $ref: '#/components/schemas/SellerDTO'
+                      - type: object
+                        properties:
+                          queries:
+                            type: array
+                            items:
+                              $ref: '#/components/schemas/ProductQuery'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: '/products/1'
+                      seller:
+                        type: string
+                        example: '/seller/1'
+                      
+        '400':
+          $ref: '#/components/responses/400'
+        '404':
+          $ref: '#/components/responses/404'
+        '500':
+          $ref: '#/components/responses/500'
   
 
 components:
@@ -2221,7 +2902,7 @@ components:
          properties:
            parent_category:
               type: string
-              example: Full Seleve Shirt
+              example: shirt 
            sub_category:
               type: number
               example: 02
@@ -2242,18 +2923,21 @@ components:
           type: string
           example: 'Category add successfully'
         data:
-          $ref: '#/components/schemas/Product'
+          allOf:
+           - type: object
+             properties:
+              id:
+                type: number
+                example: 2323454
+           - $ref: '#/components/schemas/Category'
         links:
           type: object
           properties:
             self:
               type: string
               format: url
-              example: '/products/1'
-            seller:
-              type: string
-              format: url
-              example: '/users/seller/1'
+              example: '/categories'
+            
     Product:
       allOf:
        - type: object
@@ -2360,7 +3044,52 @@ components:
             
           required: [id, authorId, articleId, body, status]
         - $ref: '#/components/schemas/Timestamp'
-    
+    Review:
+       type: object
+       properties:
+         customerId:
+           type:  number
+           example: 102393
+         productId:
+           type: number
+           example: 402443
+         orderId:
+           type: number
+           example: 402443
+         rating:
+           type: number
+           example: 4.0
+         comment:
+           type: string
+           format: text
+           example: The product is amazing. This seller provided me best service
+         createdAt:
+           type: string
+           format: date-time    
+       required: [customerId,productId,orderId, rating,comment, createdAt]
+    ReviewCreateDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 201
+        message:
+          type: string
+          example: 'Review add successfully'
+        data:
+          $ref: '#/components/schemas/Review'
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              format: url
+              example: '/products/1'
+            seller:
+              type: string
+              format: url
+              example: '/users/seller/1'
     WishlistAddDTO:
       type: object
       properties:
@@ -2431,7 +3160,6 @@ components:
         - limit
         - totalPage
         - totalItems
-
     Token:
       type: object
       properties:
@@ -2441,6 +3169,62 @@ components:
         refresh_token:
           type: string
           example: 'eyJhbGciOiJIUzI1NiCI6IkeyJzdWIiOiIxMjM0NTYwibmFtZSI6IkpvaG4gRaWF0IjoxNTE2MjM5SflKxwRJSMeKKF2QT4f6POk6yJV_adQssw5c'     
+    Transaction:
+      type: object
+      properties:
+        userId:
+          type: number
+          example: 232445
+        productId:
+          type: number
+          example: 2345234
+        shipping_method:
+          type: string
+          example: N/A
+        amount:
+          type: number
+          example: 405.34
+        transaction_type:
+          type: string
+          enum: [cod,online]
+          example: cod
+        transaction_status:
+          type: string
+          enum: [paid, due]
+          example: paid
+        created_at:
+          type: string
+          format: date-time
+      required: [userId, productId, shipping_method, amount, transaction_type, transaction_status, created_at]
+    TransactionCreateDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 201
+        message:
+          type: string
+          example: 'Transaction Recorded successfully'
+        data:
+          allOf:
+            - type: object
+              properties:
+                id:
+                  type: integer
+                  example: 20034
+            - $ref: '#/components/schemas/Transaction'
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              format: url
+              example: '/transactions'
+            
+    
+
+         
   responses:
     '500':
       description: 'Internal Server Error'
