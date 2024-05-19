@@ -353,62 +353,6 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-    put:
-      security:
-        - bearerAuth: []
-      tags: [Account]
-      description: Update Entire Product
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Full Seleve Shirt
-                category:
-                  type: number
-                  example: 02
-                thumbnail:
-                  type: string
-                  format: url
-                  example: https://s3.aws.example.com/23nds
-                summary:
-                  type: string
-                  format: text
-                  example: Summary of the products
-                description:
-                  type: string
-                  format: text
-                  example: Description of the products
-                price:
-                  type: number
-                  example: 350.07
-                quantity:
-                  type: number
-                  example: 200
-                discount_price:
-                  type: number
-                  example: 350.07
-                
-              required: [title,]
-              
-      responses:
-        '200':
-          description: 'Successfully Updated The Product'
-          content: 
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ProductUpdateDTO'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '500':
-          $ref: '#/components/responses/500'
     patch:
       security:
         - bearerAuth: []
@@ -654,62 +598,6 @@ paths:
           $ref: '#/components/responses/400'
         '404':
           $ref: '#/components/responses/404'
-        '500':
-          $ref: '#/components/responses/500'
-    put:
-      security:
-        - bearerAuth: []
-      tags: [Profile]
-      description: Update Entire Product
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Full Seleve Shirt
-                category:
-                  type: number
-                  example: 02
-                thumbnail:
-                  type: string
-                  format: url
-                  example: https://s3.aws.example.com/23nds
-                summary:
-                  type: string
-                  format: text
-                  example: Summary of the products
-                description:
-                  type: string
-                  format: text
-                  example: Description of the products
-                price:
-                  type: number
-                  example: 350.07
-                quantity:
-                  type: number
-                  example: 200
-                discount_price:
-                  type: number
-                  example: 350.07
-                
-              required: [title,]
-              
-      responses:
-        '200':
-          description: 'Successfully Updated The Product'
-          content: 
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ProductUpdateDTO'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
         '500':
           $ref: '#/components/responses/500'
     patch:
@@ -959,62 +847,6 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-    put:
-      security:
-        - bearerAuth: []
-      tags: [Profile]
-      description: Update Entire Product
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Full Seleve Shirt
-                category:
-                  type: number
-                  example: 02
-                thumbnail:
-                  type: string
-                  format: url
-                  example: https://s3.aws.example.com/23nds
-                summary:
-                  type: string
-                  format: text
-                  example: Summary of the products
-                description:
-                  type: string
-                  format: text
-                  example: Description of the products
-                price:
-                  type: number
-                  example: 350.07
-                quantity:
-                  type: number
-                  example: 200
-                discount_price:
-                  type: number
-                  example: 350.07
-                
-              required: [title,]
-              
-      responses:
-        '200':
-          description: 'Successfully Updated The Product'
-          content: 
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ProductUpdateDTO'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '500':
-          $ref: '#/components/responses/500'
     patch:
       security:
         - bearerAuth: []
@@ -1111,16 +943,10 @@ paths:
                       allOf:
                         - type: object
                           properties:
-                              parent_category:
-                                type: string
-                                example: Full Seleve Shirt
-                              sub_category:
-                                type: number
-                                example: 02
-                              slug:
-                                type: string
-                                format: url
-                                example: shirt-54-455-2344
+                            id:
+                              type: string
+                              example: 15423
+                        - $ref: '#/components/schemas/Category'
                         - $ref: '#/components/schemas/Timestamp'  
                   pagination:
                     $ref: '#/components/schemas/Pagination'
@@ -1152,7 +978,7 @@ paths:
               properties:
                 parent_category:
                   type: string
-                  example: Full Seleve Shirt
+                  example: Shirt
                 sub_category:
                   type: number
                   example: 02
@@ -1176,7 +1002,7 @@ paths:
   '/categories/{id}':
     get:
       tags: [Category]
-      description: Fetch A Single Product
+      description: Fetch A Single Category
       parameters:
         - $ref: '#/components/parameters/idPathParam'
         - in: query
@@ -1217,112 +1043,26 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-    put:
-      security:
-        - bearerAuth: []
-      tags: [Category]
-      description: Update Entire Product
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Full Seleve Shirt
-                category:
-                  type: number
-                  example: 02
-                thumbnail:
-                  type: string
-                  format: url
-                  example: https://s3.aws.example.com/23nds
-                summary:
-                  type: string
-                  format: text
-                  example: Summary of the products
-                description:
-                  type: string
-                  format: text
-                  example: Description of the products
-                price:
-                  type: number
-                  example: 350.07
-                quantity:
-                  type: number
-                  example: 200
-                discount_price:
-                  type: number
-                  example: 350.07
-                
-              required: [title,]
-              
-      responses:
-        '200':
-          description: 'Successfully Updated The Product'
-          content: 
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ProductUpdateDTO'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '500':
-          $ref: '#/components/responses/500'
     patch:
       security:
         - bearerAuth: []
       tags: [Category]
-      description: Update Product Details Partially
+      description: Update Category Partially
       parameters:
         - $ref: '#/components/parameters/idPathParam'
       requestBody:
         content:
           'application/json':
             schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Full Seleve Shirt
-                category:
-                  type: number
-                  example: 02
-                thumbnail:
-                  type: string
-                  format: url
-                  example: https://s3.aws.example.com/23nds
-                summary:
-                  type: string
-                  format: text
-                  example: Summary of the products
-                description:
-                  type: string
-                  format: text
-                  example: Description of the products
-                price:
-                  type: number
-                  example: 350.07
-                quantity:
-                  type: number
-                  example: 200
-                discount_price:
-                  type: number
-                  example: 350.07
-                
-              required: [title,]
+              $ref: '#/components/schemas/Category'
               
       responses:
-        '200':
-          description: 'Successfully Updated The Product'
+        '201':
+          description: 'Successfully Updated The Category'
           content: 
             'application/json':
               schema:
-                $ref: '#/components/schemas/ProductUpdateDTO'
+                $ref: '#/components/schemas/CategoryUpdateDTO'
         '400':
           $ref: '#/components/responses/400'
         '401':
@@ -1564,7 +1304,7 @@ paths:
               required: [title,]
               
       responses:
-        '200':
+        '201':
           description: 'Successfully Updated The Product'
           content: 
             'application/json':
@@ -1620,7 +1360,7 @@ paths:
               required: [title,]
               
       responses:
-        '200':
+        '201':
           description: 'Successfully Updated The Product'
           content: 
             'application/json':
@@ -2484,33 +2224,10 @@ paths:
                       allOf:
                         - type: object
                           properties:
-                              title:
-                                type: string
-                                example: Full Seleve Shirt
-                              category:
-                                type: number
-                                example: 02
-                              thumbnail:
-                                type: string
-                                format: url
-                                example: https://s3.aws.example.com/23nds
-                              summary:
-                                type: string
-                                format: text
-                                example: Summary of the products
-                              description:
-                                type: string
-                                format: text
-                                example: Description of the               products
-                              price:
-                                type: number
-                                example: 350.07
-                              quantity:
-                                type: number
-                                example: 200
-                              discount_price:
-                                type: number
-                                example: 350.07
+                            id:
+                              type: string
+                              example: 14235
+                        - $ref: '#/components/schemas/Transaction'
                         - $ref: '#/components/schemas/Timestamp'  
                   pagination:
                     $ref: '#/components/schemas/Pagination'
@@ -2606,118 +2323,51 @@ paths:
           $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-    put:
-      security:
-        - bearerAuth: []
+  '/transactions/users/{userId}':
+    get:
       tags: [Transaction]
-      description: Update Entire Product
+      description: Fetch A Single Users Transaction
       parameters:
         - $ref: '#/components/parameters/idPathParam'
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Full Seleve Shirt
-                category:
-                  type: number
-                  example: 02
-                thumbnail:
-                  type: string
-                  format: url
-                  example: https://s3.aws.example.com/23nds
-                summary:
-                  type: string
-                  format: text
-                  example: Summary of the products
-                description:
-                  type: string
-                  format: text
-                  example: Description of the products
-                price:
-                  type: number
-                  example: 350.07
-                quantity:
-                  type: number
-                  example: 200
-                discount_price:
-                  type: number
-                  example: 350.07
-                
-              required: [title,]
-              
+        - in: query
+          name: expand
+          description: expand vendor and  query object
+          schema:
+            type: string
+            example: 'vendor, query'
       responses:
         '200':
-          description: 'Successfully Updated The Product'
-          content: 
+          description: Single Users All Transaction
+          content:
             'application/json':
               schema:
-                $ref: '#/components/schemas/ProductUpdateDTO'
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: '#/components/schemas/Transaction'
+                        - $ref: '#/components/schemas/Timestamp'  
+                  pagination:
+                    $ref: '#/components/schemas/Pagination'
+                  links:
+                    type: object
+                    properties:
+                      self:
+                        type: string
+                        example: '/products/1'
+                      seller:
+                        type: string
+                        example: '/seller/1'
+                      
         '400':
           $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
+        '404':
+          $ref: '#/components/responses/404'
         '500':
           $ref: '#/components/responses/500'
-    patch:
-      security:
-        - bearerAuth: []
-      tags: [Transaction]
-      description: Update Product Details Partially
-      parameters:
-        - $ref: '#/components/parameters/idPathParam'
-      requestBody:
-        content:
-          'application/json':
-            schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                  example: Full Seleve Shirt
-                category:
-                  type: number
-                  example: 02
-                thumbnail:
-                  type: string
-                  format: url
-                  example: https://s3.aws.example.com/23nds
-                summary:
-                  type: string
-                  format: text
-                  example: Summary of the products
-                description:
-                  type: string
-                  format: text
-                  example: Description of the products
-                price:
-                  type: number
-                  example: 350.07
-                quantity:
-                  type: number
-                  example: 200
-                discount_price:
-                  type: number
-                  example: 350.07
-                
-              required: [title,]
-              
-      responses:
-        '200':
-          description: 'Successfully Updated The Product'
-          content: 
-            'application/json':
-              schema:
-                $ref: '#/components/schemas/ProductUpdateDTO'
-        '400':
-          $ref: '#/components/responses/400'
-        '401':
-          $ref: '#/components/responses/401'
-        '500':
-          $ref: '#/components/responses/500'
+  
   '/dashboard/admin':
     get:
       tags: [Dashboard]
@@ -2937,6 +2587,31 @@ components:
               type: string
               format: url
               example: '/categories'
+    CategoryUpdateDTO:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+          example: 201
+        message:
+          type: string
+          example: 'Category Data Updated successfully'
+        data:
+          allOf:
+           - type: object
+             properties:
+              id:
+                type: number
+                example: 2323454
+           - $ref: '#/components/schemas/Category'
+        links:
+          type: object
+          properties:
+            self:
+              type: string
+              format: url
+              example: '/categories/{id}'
             
     Product:
       allOf:
