@@ -1,7 +1,7 @@
 openapi: 3.0.0
 info:
   version: '1.0.0'
-  title: 'CODEMEN - ECART'
+  title: 'CODEMEN - CLICK_CART'
   description: |
     'This is a multivendor ecommerce website.Where we have implemented different types of industry standard procedure.'
      
